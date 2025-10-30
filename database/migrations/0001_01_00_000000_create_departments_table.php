@@ -9,7 +9,7 @@ return new class extends Migration {
     {
         Schema::create('departments', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); // Finance, HR, IT, Operasional
+            $table->string('name');
             $table->string('code')->nullable();
             $table->timestamps();
         });

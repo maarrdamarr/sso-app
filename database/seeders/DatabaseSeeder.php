@@ -2,24 +2,79 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+use App\Models\Application;
+use App\Models\Role;
+use App\Models\User;
+use App\Models\Department;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // roles
+        $super = Role::firstOrCreate(
+            ['name' => 'superadmin'],
+            ['label' => 'Super Administrator']
+        );
+        $it = Role::firstOrCreate(
+            ['name' => 'it-admin'],
+            ['label' => 'Administrator TI']
+        );
+        $hr = Role::firstOrCreate(
+            ['name' => 'hr'],
+            ['label' => 'Human Resource']
+        );
+        $staff = Role::firstOrCreate(
+            ['name' => 'karyawan'],
+            ['label' => 'Karyawan']
+        );
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // departemen
+        $depIt = Department::firstOrCreate(['name' => 'IT', 'code' => 'IT']);
+        $depHr = Department::firstOrCreate(['name' => 'Human Resource', 'code' => 'HR']);
+
+        // user superadmin
+        $user = User::firstOrCreate(
+            ['email' => 'superadmin@company.test'],
+            [
+                'name' => 'Super Admin',
+                'username' => 'superadmin',
+                'password' => Hash::make('password'),
+                'department_id' => $depIt->id,
+            ]
+        );
+
+        // attach role
+        $user->roles()->sync([$super->id]);
+
+        // aplikasi
+        Application::firstOrCreate([
+            'slug' => 'hris',
+        ], [
+            'name' => 'HRIS',
+            'url' => 'https://hris.company.test',
+            'icon' => 'bi-people-fill',
+            'active' => true,
+        ]);
+
+        Application::firstOrCreate([
+            'slug' => 'eoffice',
+        ], [
+            'name' => 'E-Office',
+            'url' => 'https://eoffice.company.test',
+            'icon' => 'bi-building-fill',
+            'active' => true,
+        ]);
+
+        Application::firstOrCreate([
+            'slug' => 'elp',
+        ], [
+            'name' => 'E-Learning Perusahaan',
+            'url' => 'https://elp.company.test',
+            'icon' => 'bi-mortarboard-fill',
+            'active' => true,
         ]);
     }
 }
