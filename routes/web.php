@@ -7,26 +7,24 @@ use App\Http\Controllers\SsoController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SsoLogController;
 
-Route::get('/', function () {
-    return redirect()->route('login');
-});
+Route::get('/', fn () => redirect()->route('login'));
 
+# --- Auth (tanpa API)
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'doLogin'])->name('login.do');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware('auth')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+    # Dashboard & SSO
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
-    // sso
     Route::get('/sso/{slug}', [SsoController::class, 'redirect'])->name('sso.redirect');
 
-    // hanya admin
+    # ===== Admin only: superadmin & it-admin =====
     Route::middleware('role:superadmin,it-admin')->group(function () {
-
-        // aplikasi
+        // Applications CRUD
         Route::get('/applications', [ApplicationController::class, 'index'])->name('applications.index');
         Route::get('/applications/create', [ApplicationController::class, 'create'])->name('applications.create');
         Route::post('/applications', [ApplicationController::class, 'store'])->name('applications.store');
@@ -34,17 +32,29 @@ Route::middleware('auth')->group(function () {
         Route::put('/applications/{application}', [ApplicationController::class, 'update'])->name('applications.update');
         Route::delete('/applications/{application}', [ApplicationController::class, 'destroy'])->name('applications.destroy');
 
-        // set role ke aplikasi
+        // Applications ↔ Roles
         Route::get('/applications/{application}/roles', [ApplicationController::class, 'editRoles'])->name('applications.roles');
         Route::post('/applications/{application}/roles', [ApplicationController::class, 'updateRoles'])->name('applications.roles.update');
 
-        // role
+        // Roles
         Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');
         Route::post('/roles', [RoleController::class, 'store'])->name('roles.store');
         Route::delete('/roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
 
-        // user
+        // SSO Logs
+        Route::get('/sso-logs', [SsoLogController::class, 'index'])->name('sso.logs');
+    });
+
+    # ===== Users (superadmin, it-admin, hr) =====
+    Route::middleware('role:superadmin,it-admin,hr')->group(function () {
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
+        Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
+        Route::post('/users', [UserController::class, 'store'])->name('users.store');
+        Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+        Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+        Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+
+        // atur role user (cek detail izin di controller)
         Route::post('/users/{user}/roles', [UserController::class, 'updateRoles'])->name('users.roles.update');
     });
 });

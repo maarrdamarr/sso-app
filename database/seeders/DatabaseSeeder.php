@@ -8,6 +8,8 @@ use App\Models\Application;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\Department;
+use App\Models\SsoLog;
+
 
 class DatabaseSeeder extends Seeder
 {
@@ -45,6 +47,36 @@ class DatabaseSeeder extends Seeder
                 'department_id' => $depIt->id,
             ]
         );
+        // user it-admin
+        $user = User::firstOrCreate(
+            ['email' => 'itadmin@company.test'],
+            [
+                'name' => 'IT Admin',
+                'username' => 'itadmin',
+                'password' => Hash::make('password'),
+                'department_id' => $depIt->id,
+            ]
+        );
+        // user hr
+        $user = User::firstOrCreate(
+            ['email' => 'hr@company.test'],
+            [
+                'name' => 'HR',
+                'username' => 'hr',
+                'password' => Hash::make('password'),
+                'department_id' => $depHr->id,
+            ]
+        );
+        // user karyawan
+        $user = User::firstOrCreate(
+            ['email' => 'karyawan@company.test'],
+            [
+                'name' => 'Karyawan',
+                'username' => 'karyawan',
+                'password' => Hash::make('password'),
+                'department_id' => $depIt->id,
+            ]
+        );
 
         // attach role
         $user->roles()->sync([$super->id]);
@@ -77,4 +109,5 @@ class DatabaseSeeder extends Seeder
             'active' => true,
         ]);
     }
+        
 }

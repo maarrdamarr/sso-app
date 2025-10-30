@@ -41,22 +41,31 @@
 <div class="sidebar p-3" style="width:240px">
     <h5 class="mb-3">Damar SSO</h5>
 
-    {{-- menu yang boleh dilihat semua user yang sudah login --}}
     <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
         <i class="bi bi-grid"></i> Dashboard
     </a>
 
     @auth
+        {{-- admin utama --}}
         @if(auth()->user()->hasRole(['superadmin','it-admin']))
-            {{-- menu admin saja --}}
             <a href="{{ route('applications.index') }}" class="{{ request()->routeIs('applications.*') ? 'active' : '' }}">
                 <i class="bi bi-grid-3x3-gap"></i> Aplikasi
             </a>
-            <a href="{{ route('users.index') }}" class="{{ request()->routeIs('users.*') ? 'active' : '' }}">
-                <i class="bi bi-people"></i> Pengguna
-            </a>
+        @endif
+
+        {{-- menu user boleh dilihat HR juga --}}
+    @if(auth()->user()->hasRole(['superadmin','it-admin','hr']) && Route::has('users.index'))
+        <a href="{{ route('users.index') }}" class="{{ request()->routeIs('users.*') ? 'active' : '' }}">
+            <i class="bi bi-people"></i> Pengguna
+        </a>
+    @endif
+
+        @if(auth()->user()->hasRole(['superadmin','it-admin']))
             <a href="{{ route('roles.index') }}" class="{{ request()->routeIs('roles.*') ? 'active' : '' }}">
                 <i class="bi bi-shield-lock"></i> Role
+            </a>
+            <a href="{{ route('sso.logs') }}" class="{{ request()->routeIs('sso.logs') ? 'active' : '' }}">
+                <i class="bi bi-clipboard2-data"></i> Log SSO
             </a>
         @endif
     @endauth
@@ -68,6 +77,8 @@
         </button>
     </form>
 </div>
+
+
 
     <div class="flex-grow-1">
         <nav class="navbar bg-white border-bottom">
