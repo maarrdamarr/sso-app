@@ -38,17 +38,37 @@
 </head>
 <body>
 <div class="d-flex">
-    <div class="sidebar p-3" style="width:240px">
-        <h5 class="mb-3">Damar SSO</h5>
-        <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}"><i class="bi bi-grid"></i> Dashboard</a>
-        <a href="{{ route('applications.index') }}" class="{{ request()->routeIs('applications.*') ? 'active' : '' }}"><i class="bi bi-grid-3x3-gap"></i> Aplikasi</a>
-        <a href="{{ route('users.index') }}" class="{{ request()->routeIs('users.*') ? 'active' : '' }}"><i class="bi bi-people"></i> Pengguna</a>
+<div class="sidebar p-3" style="width:240px">
+    <h5 class="mb-3">Damar SSO</h5>
 
-        <form action="{{ route('logout') }}" method="post" class="mt-4">
-            @csrf
-            <button class="btn btn-sm btn-danger w-100"><i class="bi bi-box-arrow-left"></i> Keluar</button>
-        </form>
-    </div>
+    {{-- menu yang boleh dilihat semua user yang sudah login --}}
+    <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
+        <i class="bi bi-grid"></i> Dashboard
+    </a>
+
+    @auth
+        @if(auth()->user()->hasRole(['superadmin','it-admin']))
+            {{-- menu admin saja --}}
+            <a href="{{ route('applications.index') }}" class="{{ request()->routeIs('applications.*') ? 'active' : '' }}">
+                <i class="bi bi-grid-3x3-gap"></i> Aplikasi
+            </a>
+            <a href="{{ route('users.index') }}" class="{{ request()->routeIs('users.*') ? 'active' : '' }}">
+                <i class="bi bi-people"></i> Pengguna
+            </a>
+            <a href="{{ route('roles.index') }}" class="{{ request()->routeIs('roles.*') ? 'active' : '' }}">
+                <i class="bi bi-shield-lock"></i> Role
+            </a>
+        @endif
+    @endauth
+
+    <form action="{{ route('logout') }}" method="post" class="mt-4">
+        @csrf
+        <button class="btn btn-sm btn-danger w-100">
+            <i class="bi bi-box-arrow-left"></i> Keluar
+        </button>
+    </form>
+</div>
+
     <div class="flex-grow-1">
         <nav class="navbar bg-white border-bottom">
             <div class="container-fluid">

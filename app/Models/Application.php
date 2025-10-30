@@ -13,4 +13,9 @@ class Application extends Model
         'icon',
         'active',
     ];
+
+        public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'application_role');
+    }
 }
