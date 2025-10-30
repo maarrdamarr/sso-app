@@ -8,6 +8,11 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SsoLogController;
+use App\Http\Controllers\AnnouncementController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\HelpController;
+
+
 
 Route::get('/', fn () => redirect()->route('login'));
 
@@ -43,6 +48,15 @@ Route::middleware('auth')->group(function () {
 
         // SSO Logs
         Route::get('/sso-logs', [SsoLogController::class, 'index'])->name('sso.logs');
+
+        // pengumuman
+        Route::get('/announcements', [AnnouncementController::class, 'index'])->name('announcements.index');
+        Route::get('/announcements/create', [AnnouncementController::class, 'create'])->name('announcements.create');
+        Route::post('/announcements', [AnnouncementController::class, 'store'])->name('announcements.store');
+        Route::get('/announcements/{announcement}/edit', [AnnouncementController::class, 'edit'])->name('announcements.edit');
+        Route::put('/announcements/{announcement}', [AnnouncementController::class, 'update'])->name('announcements.update');
+        Route::delete('/announcements/{announcement}', [AnnouncementController::class, 'destroy'])->name('announcements.destroy');
+
     });
 
     # ===== Users (superadmin, it-admin, hr) =====
@@ -56,5 +70,21 @@ Route::middleware('auth')->group(function () {
 
         // atur role user (cek detail izin di controller)
         Route::post('/users/{user}/roles', [UserController::class, 'updateRoles'])->name('users.roles.update');
+
+        Route::get('/departments', [\App\Http\Controllers\DepartmentController::class, 'index'])->name('departments.index');
+        Route::post('/departments', [\App\Http\Controllers\DepartmentController::class, 'store'])->name('departments.store');
+        Route::delete('/departments/{department}', [\App\Http\Controllers\DepartmentController::class, 'destroy'])->name('departments.destroy');
+
     });
+
+    // profil user (semua user)
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+    Route::post('/profile', [ProfileController::class, 'updatePassword'])->name('profile.updatePassword');
+
+    // riwayat sso milik user sendiri
+    Route::get('/my-logs', [SsoLogController::class, 'my'])->name('sso.my');
+
+    // halaman bantuan
+    Route::get('/help', [HelpController::class, 'index'])->name('help.index');
+
 });
