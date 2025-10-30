@@ -14,6 +14,10 @@ use App\Http\Controllers\HelpController;
 use App\Http\Controllers\AccessRequestController;
 use App\Http\Controllers\ApplicationCategoryController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\TicketController;
+use App\Http\Controllers\QuickLinkController;
+use App\Http\Controllers\FeedbackController;
+
 
 
 
@@ -75,6 +79,18 @@ Route::middleware('auth')->group(function () {
         Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
         Route::post('/settings', [SettingController::class, 'store'])->name('settings.store');
 
+            // ============ Tiket IT (admin lihat semua) ============
+        Route::get('/tickets', [TicketController::class, 'index'])->name('tickets.index');
+        Route::post('/tickets/{ticket}/status', [TicketController::class, 'updateStatus'])->name('tickets.updateStatus');
+
+        // ============ Link Cepat (admin) ============
+        Route::get('/quick-links/manage', [QuickLinkController::class, 'index'])->name('quick-links.index');
+        Route::post('/quick-links', [QuickLinkController::class, 'store'])->name('quick-links.store');
+        Route::delete('/quick-links/{quickLink}', [QuickLinkController::class, 'destroy'])->name('quick-links.destroy');
+
+        // ============ Feedback (admin) ============
+        Route::get('/feedback', [FeedbackController::class, 'index'])->name('feedback.index');
+
 
     });
 
@@ -110,5 +126,17 @@ Route::middleware('auth')->group(function () {
     Route::get('/access-requests/create', [AccessRequestController::class, 'create'])->name('access-requests.create');
     Route::post('/access-requests', [AccessRequestController::class, 'store'])->name('access-requests.store');
     Route::get('/access-requests/my', [AccessRequestController::class, 'my'])->name('access-requests.my');
+
+        // ============ Tiket IT (user) ============
+    Route::get('/tickets/create', [TicketController::class, 'create'])->name('tickets.create');
+    Route::post('/tickets', [TicketController::class, 'store'])->name('tickets.store');
+    Route::get('/tickets/my', [TicketController::class, 'my'])->name('tickets.my');
+
+    // ============ Feedback (user) ============
+    Route::get('/feedback/create', [FeedbackController::class, 'create'])->name('feedback.create');
+    Route::post('/feedback', [FeedbackController::class, 'store'])->name('feedback.store');
+
+    // ============ Link Cepat (user lihat) ============
+    Route::get('/quick-links', [QuickLinkController::class, 'public'])->name('quick-links.public');
 
 });
