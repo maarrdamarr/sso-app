@@ -18,4 +18,10 @@ class Application extends Model
     {
         return $this->belongsToMany(Role::class, 'application_role');
     }
+
+    // di App\Models\Application
+    public function category()
+    {
+        return $this->belongsTo(\App\Models\ApplicationCategory::class, 'application_category_id');
+    }
 }

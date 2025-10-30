@@ -11,6 +11,10 @@ use App\Http\Controllers\SsoLogController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\HelpController;
+use App\Http\Controllers\AccessRequestController;
+use App\Http\Controllers\ApplicationCategoryController;
+use App\Http\Controllers\SettingController;
+
 
 
 
@@ -57,6 +61,21 @@ Route::middleware('auth')->group(function () {
         Route::put('/announcements/{announcement}', [AnnouncementController::class, 'update'])->name('announcements.update');
         Route::delete('/announcements/{announcement}', [AnnouncementController::class, 'destroy'])->name('announcements.destroy');
 
+        // ============ 1. Permintaan akses (ADMIN lihat & tindak) ============
+        Route::get('/access-requests', [AccessRequestController::class, 'index'])->name('access-requests.index');
+        Route::post('/access-requests/{accessRequest}/approve', [AccessRequestController::class, 'approve'])->name('access-requests.approve');
+        Route::post('/access-requests/{accessRequest}/reject', [AccessRequestController::class, 'reject'])->name('access-requests.reject');
+
+        // ============ 2. Kategori Aplikasi ============
+        Route::get('/app-categories', [ApplicationCategoryController::class, 'index'])->name('app-categories.index');
+        Route::post('/app-categories', [ApplicationCategoryController::class, 'store'])->name('app-categories.store');
+        Route::delete('/app-categories/{category}', [ApplicationCategoryController::class, 'destroy'])->name('app-categories.destroy');
+
+        // ============ 3. Pengaturan Sistem ============
+        Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+        Route::post('/settings', [SettingController::class, 'store'])->name('settings.store');
+
+
     });
 
     # ===== Users (superadmin, it-admin, hr) =====
@@ -86,5 +105,10 @@ Route::middleware('auth')->group(function () {
 
     // halaman bantuan
     Route::get('/help', [HelpController::class, 'index'])->name('help.index');
+
+    // ============ 1. Permintaan akses (user biasa) ============
+    Route::get('/access-requests/create', [AccessRequestController::class, 'create'])->name('access-requests.create');
+    Route::post('/access-requests', [AccessRequestController::class, 'store'])->name('access-requests.store');
+    Route::get('/access-requests/my', [AccessRequestController::class, 'my'])->name('access-requests.my');
 
 });

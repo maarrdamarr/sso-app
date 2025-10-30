@@ -38,80 +38,115 @@
 </head>
 <body>
 <div class="d-flex">
-  <div class="sidebar p-3" style="width:240px">
-      <h5 class="mb-3">Damar SSO</h5>
+<div class="sidebar p-3" style="width:240px">
+    <h5 class="mb-3">Damar SSO</h5>
 
-      <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
-          <i class="bi bi-grid"></i> Dashboard
-      </a>
+    <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
+        <i class="bi bi-grid"></i> Dashboard
+    </a>
 
-      {{-- menu baru: profil (semua user) --}}
-      @auth
-          @if(Route::has('profile.index'))
-              <a href="{{ route('profile.index') }}" class="{{ request()->routeIs('profile.index') ? 'active' : '' }}">
-                  <i class="bi bi-person-circle"></i> Profil Saya
-              </a>
-          @endif
-      @endauth
+    {{-- Profil saya (semua user) --}}
+    @auth
+        @if(Route::has('profile.index'))
+            <a href="{{ route('profile.index') }}" class="{{ request()->routeIs('profile.index') ? 'active' : '' }}">
+                <i class="bi bi-person-circle"></i> Profil Saya
+            </a>
+        @endif
+    @endauth
 
-      @auth
-          {{-- admin utama --}}
-          @if(auth()->user()->hasRole(['superadmin','it-admin']))
-              <a href="{{ route('applications.index') }}" class="{{ request()->routeIs('applications.*') ? 'active' : '' }}">
-                  <i class="bi bi-grid-3x3-gap"></i> Aplikasi
-              </a>
-          @endif
+    @auth
+        {{-- admin utama --}}
+        @if(auth()->user()->hasRole(['superadmin','it-admin']))
+            <a href="{{ route('applications.index') }}" class="{{ request()->routeIs('applications.*') ? 'active' : '' }}">
+                <i class="bi bi-grid-3x3-gap"></i> Aplikasi
+            </a>
+        @endif
 
-          {{-- menu user boleh dilihat HR juga --}}
-          @if(auth()->user()->hasRole(['superadmin','it-admin','hr']) && Route::has('users.index'))
-              <a href="{{ route('users.index') }}" class="{{ request()->routeIs('users.*') ? 'active' : '' }}">
-                  <i class="bi bi-people"></i> Pengguna
-              </a>
-          @endif
+        {{-- PERMINTAAN AKSES: user biasa --}}
+        @if(Route::has('access-requests.create'))
+            <a href="{{ route('access-requests.create') }}" class="{{ request()->routeIs('access-requests.create') ? 'active' : '' }}">
+                <i class="bi bi-unlock"></i> Minta Akses
+            </a>
+        @endif
 
-          @if(auth()->user()->hasRole(['superadmin','it-admin','hr']) && Route::has('departments.index'))
-              <a href="{{ route('departments.index') }}" class="{{ request()->routeIs('departments.*') ? 'active' : '' }}">
-                  <i class="bi bi-diagram-3"></i> Departemen
-              </a>
-          @endif
+        {{-- PERMINTAAN SAYA --}}
+        @if(Route::has('access-requests.my'))
+            <a href="{{ route('access-requests.my') }}" class="{{ request()->routeIs('access-requests.my') ? 'active' : '' }}">
+                <i class="bi bi-list-check"></i> Permintaan Saya
+            </a>
+        @endif
 
-          @if(auth()->user()->hasRole(['superadmin','it-admin']) && Route::has('announcements.index'))
-              <a href="{{ route('announcements.index') }}" class="{{ request()->routeIs('announcements.*') ? 'active' : '' }}">
-                  <i class="bi bi-megaphone"></i> Pengumuman
-              </a>
-          @endif
+        {{-- menu user boleh dilihat HR juga --}}
+        @if(auth()->user()->hasRole(['superadmin','it-admin','hr']) && Route::has('users.index'))
+            <a href="{{ route('users.index') }}" class="{{ request()->routeIs('users.*') ? 'active' : '' }}">
+                <i class="bi bi-people"></i> Pengguna
+            </a>
+        @endif
 
-          {{-- menu baru: riwayat sso milik user --}}
-          @if(Route::has('sso.my'))
-              <a href="{{ route('sso.my') }}" class="{{ request()->routeIs('sso.my') ? 'active' : '' }}">
-                  <i class="bi bi-clock-history"></i> Riwayat SSO-ku
-              </a>
-          @endif
+        @if(auth()->user()->hasRole(['superadmin','it-admin','hr']) && Route::has('departments.index'))
+            <a href="{{ route('departments.index') }}" class="{{ request()->routeIs('departments.*') ? 'active' : '' }}">
+                <i class="bi bi-diagram-3"></i> Departemen
+            </a>
+        @endif
 
-          {{-- menu baru: Bantuan --}}
-          @if(Route::has('help.index'))
-              <a href="{{ route('help.index') }}" class="{{ request()->routeIs('help.index') ? 'active' : '' }}">
-                  <i class="bi bi-question-circle"></i> Bantuan
-              </a>
-          @endif
+        @if(auth()->user()->hasRole(['superadmin','it-admin']) && Route::has('announcements.index'))
+            <a href="{{ route('announcements.index') }}" class="{{ request()->routeIs('announcements.*') ? 'active' : '' }}">
+                <i class="bi bi-megaphone"></i> Pengumuman
+            </a>
+        @endif
 
-          @if(auth()->user()->hasRole(['superadmin','it-admin']))
-              <a href="{{ route('roles.index') }}" class="{{ request()->routeIs('roles.*') ? 'active' : '' }}">
-                  <i class="bi bi-shield-lock"></i> Role
-              </a>
-              <a href="{{ route('sso.logs') }}" class="{{ request()->routeIs('sso.logs') ? 'active' : '' }}">
-                  <i class="bi bi-clipboard2-data"></i> Log SSO
-              </a>
-          @endif
-      @endauth
+        {{-- APPROVAL AKSES: admin --}}
+        @if(auth()->user()->hasRole(['superadmin','it-admin']) && Route::has('access-requests.index'))
+            <a href="{{ route('access-requests.index') }}" class="{{ request()->routeIs('access-requests.index') ? 'active' : '' }}">
+                <i class="bi bi-shield-check"></i> Approval Akses
+            </a>
+        @endif
 
-      <form action="{{ route('logout') }}" method="post" class="mt-4">
-          @csrf
-          <button class="btn btn-sm btn-danger w-100">
-              <i class="bi bi-box-arrow-left"></i> Keluar
-          </button>
-      </form>
-  </div>
+        {{-- KATEGORI APLIKASI --}}
+        @if(auth()->user()->hasRole(['superadmin','it-admin']) && Route::has('app-categories.index'))
+            <a href="{{ route('app-categories.index') }}" class="{{ request()->routeIs('app-categories.*') ? 'active' : '' }}">
+                <i class="bi bi-tags"></i> Kategori Aplikasi
+            </a>
+        @endif
+
+        {{-- PENGATURAN SISTEM --}}
+        @if(auth()->user()->hasRole(['superadmin']) && Route::has('settings.index'))
+            <a href="{{ route('settings.index') }}" class="{{ request()->routeIs('settings.*') ? 'active' : '' }}">
+                <i class="bi bi-gear"></i> Pengaturan
+            </a>
+        @endif
+
+        {{-- RIWAYAT SSO milik user --}}
+        @if(Route::has('sso.my'))
+            <a href="{{ route('sso.my') }}" class="{{ request()->routeIs('sso.my') ? 'active' : '' }}">
+                <i class="bi bi-clock-history"></i> Riwayat SSO-ku
+            </a>
+        @endif
+
+        {{-- Bantuan --}}
+        @if(Route::has('help.index'))
+            <a href="{{ route('help.index') }}" class="{{ request()->routeIs('help.index') ? 'active' : '' }}">
+                <i class="bi bi-question-circle"></i> Bantuan
+            </a>
+        @endif
+
+        @if(auth()->user()->hasRole(['superadmin','it-admin']))
+            <a href="{{ route('roles.index') }}" class="{{ request()->routeIs('roles.*') ? 'active' : '' }}">
+                <i class="bi bi-shield-lock"></i> Role
+            </a>
+            <a href="{{ route('sso.logs') }}" class="{{ request()->routeIs('sso.logs') ? 'active' : '' }}">
+                <i class="bi bi-clipboard2-data"></i> Log SSO
+            </a>
+        @endif
+    @endauth
+
+    <form action="{{ route('logout') }}" method="post" class="mt-4">
+        @csrf
+        <button class="btn btn-sm btn-danger w-100">
+            <i class="bi bi-box-arrow-left"></i> Keluar
+        </button>
+    </form>
+</div>
 
   <div class="flex-grow-1">
       <nav class="navbar bg-white border-bottom">
